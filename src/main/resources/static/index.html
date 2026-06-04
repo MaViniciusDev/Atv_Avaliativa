@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steam Catalog</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<!-- ===================== HEADER ===================== -->
+<header class="topbar">
+    <div class="brand">
+        <span class="brand-logo">▶</span>
+        <span class="brand-name">STEAM<span class="brand-accent">CATALOG</span></span>
+    </div>
+    <nav class="mainnav">
+        <button class="nav-btn active" data-view="games">Loja</button>
+        <button class="nav-btn" data-view="developers">Developers</button>
+        <button class="nav-btn" data-view="publishers">Publishers</button>
+        <button class="nav-btn" data-view="import">Importar</button>
+    </nav>
+    <div class="stats" id="stats">
+        <span class="stat"><b id="stat-games">–</b> jogos</span>
+        <span class="stat"><b id="stat-developers">–</b> devs</span>
+        <span class="stat"><b id="stat-publishers">–</b> pubs</span>
+    </div>
+</header>
+
+<main class="container">
+
+    <!-- ===================== GAMES ===================== -->
+    <section id="view-games" class="view active">
+        <div class="view-head">
+            <h1>Catálogo de Jogos</h1>
+            <button class="btn btn-green" onclick="openGameForm()">+ Novo Jogo</button>
+        </div>
+
+        <div class="filters">
+            <input type="text" id="f-name" placeholder="Nome do jogo...">
+            <select id="f-type">
+                <option value="">Tipo (todos)</option>
+                <option value="game">game</option>
+                <option value="dlc">dlc</option>
+                <option value="demo">demo</option>
+                <option value="music">music</option>
+            </select>
+            <input type="number" id="f-minPrice" placeholder="US$ mín" step="0.01">
+            <input type="number" id="f-maxPrice" placeholder="US$ máx" step="0.01">
+            <input type="number" id="f-minScore" placeholder="Score min (0-10)" min="0" max="10">
+            <input type="number" id="f-maxRank" placeholder="Rank até">
+            <input type="text" id="f-tag" placeholder="Tag (ex: action)">
+            <input type="text" id="f-developer" placeholder="Developer (exato)">
+            <input type="text" id="f-publisher" placeholder="Publisher (exato)">
+            <button class="btn btn-blue" onclick="searchGames()">Buscar</button>
+            <button class="btn btn-ghost" onclick="clearGameFilters()">Limpar</button>
+        </div>
+
+        <p class="result-info" id="games-info"></p>
+        <div class="grid" id="games-grid"></div>
+    </section>
+
+    <!-- ===================== DEVELOPERS ===================== -->
+    <section id="view-developers" class="view">
+        <div class="view-head">
+            <h1>Developers</h1>
+            <button class="btn btn-green" onclick="openEntityForm('developer')">+ Novo Developer</button>
+        </div>
+        <div class="filters">
+            <input type="text" id="d-name" placeholder="Parte do nome...">
+            <input type="text" id="d-country" placeholder="País...">
+            <button class="btn btn-blue" onclick="searchDevelopers()">Buscar</button>
+        </div>
+        <table class="data-table" id="developers-table">
+            <thead><tr><th>Nome</th><th>País</th><th class="col-actions">Ações</th></tr></thead>
+            <tbody></tbody>
+        </table>
+    </section>
+
+    <!-- ===================== PUBLISHERS ===================== -->
+    <section id="view-publishers" class="view">
+        <div class="view-head">
+            <h1>Publishers</h1>
+            <button class="btn btn-green" onclick="openEntityForm('publisher')">+ Novo Publisher</button>
+        </div>
+        <div class="filters">
+            <input type="text" id="p-name" placeholder="Parte do nome...">
+            <input type="text" id="p-country" placeholder="País...">
+            <button class="btn btn-blue" onclick="searchPublishers()">Buscar</button>
+        </div>
+        <table class="data-table" id="publishers-table">
+            <thead><tr><th>Nome</th><th>País</th><th class="col-actions">Ações</th></tr></thead>
+            <tbody></tbody>
+        </table>
+    </section>
+
+    <!-- ===================== IMPORT ===================== -->
+    <section id="view-import" class="view">
+        <div class="view-head"><h1>Importação do CSV (via Thread)</h1></div>
+        <div class="import-panel">
+            <p>A importação roda em segundo plano. Você pode navegar enquanto ela acontece.</p>
+            <div class="filters">
+                <input type="text" id="i-path" value="data/SteamGames_cleaned.csv" style="flex:2">
+                <input type="number" id="i-limit" value="0" placeholder="Limite (0 = todos)">
+                <button class="btn btn-green" id="i-start" onclick="startImport()">Iniciar importação</button>
+            </div>
+            <div class="progress-card" id="import-status">
+                <span class="muted">Nenhuma importação executada nesta sessão.</span>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<!-- ===================== MODAL ===================== -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this) closeModal()">
+    <div class="modal" id="modal-content"></div>
+</div>
+
+<!-- ===================== TOAST ===================== -->
+<div class="toast-wrap" id="toasts"></div>
+
+<script src="/app.js"></script>
+</body>
+</html>

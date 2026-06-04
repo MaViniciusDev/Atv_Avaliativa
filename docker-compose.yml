@@ -1,0 +1,41 @@
+# ============================================================================
+# Sobe a stack completa com um comando:
+#   docker compose up --build
+# Depois acesse http://localhost:8090
+#
+# - mongo: banco de dados (dados persistidos no volume "mongo-data")
+# - app:   aplicacao Spring Boot (conecta ao mongo pela rede interna do compose)
+# ============================================================================
+
+services:
+
+  mongo:
+    image: mongo:7
+    container_name: steam-mongo
+    # a porta NAO e exposta no host para nao conflitar com outro MongoDB local;
+    # o app acessa o mongo pela rede interna do compose (host "mongo").
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  app:
+    build: .
+    container_name: steam-app
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      MONGODB_URI: mongodb://mongo:27017
+      MONGODB_DB: steamcatalog
+      SERVER_PORT: 8090
+    ports:
+      # porta do HOST configuravel: se a 8090 estiver ocupada (ex.: app rodando
+      # pelo IDE), suba com:  APP_PORT=8095 docker compose up
+      - "${APP_PORT:-8090}:8090"
+
+volumes:
+  mongo-data:
